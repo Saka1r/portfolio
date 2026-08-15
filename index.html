@@ -42,12 +42,12 @@
             white-space: nowrap;
         }
 
-        
         .input-wrapper {
             display: flex;
             flex-grow: 1;
             align-items: center;
             min-width: 0;
+            position: relative;
         }
 
         input {
@@ -60,16 +60,19 @@
             outline: none;
             caret-color: transparent;
             min-width: 50px;
+            padding-right: 12px;
         }
         
         .cursor {
+            position: absolute;
             display: inline-block;
             width: 10px;
-            height: 1em;
+            height: 1.2em;
             background-color: #00ff41;
             animation: blink 1s step-end infinite;
-            margin-left: 2px;
-            flex-shrink: 0;
+            pointer-events: none;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         @keyframes blink { 50% { opacity: 0; } }
@@ -79,10 +82,36 @@
             margin: 2px 0;
         }
 
+        /* Анимация появления тянки */
+        .ascii-art {
+            color: #ff79c6;
+            line-height: 1.1;
+            display: inline-block;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text {
+            color: #58a6ff;
+        }
+
         /* Адаптив для мобильных */
         @media (max-width: 600px) {
             body { font-size: 14px; padding: 10px; }
             .prompt { font-size: 14px; }
+            .ascii-art { font-size: 12px; }
         }
     </style>
 </head>
@@ -103,6 +132,27 @@
         const output = document.getElementById('output');
         const input = document.getElementById('command-input');
 
+        // История команд (глобальные переменные)
+        let commandHistory = [];
+        let historyIndex = -1;
+
+        // ASCII-арт
+        const catgirlArt = `<span class="ascii-art">
+  /\\_/\\
+ ( o.o )
+ /|   |\\
+(_|   |_)
+  U   U
+</span>`;
+
+        const welcomeText = `<span class="welcome-text">
+<b>★ sakair@portfolio terminal ★</b>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Welcome, guest! 
+ Type <span style="color:#ff7b72">"help"</span> to begin your journey.
+ 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>`;
+
         // База команд 
         const commands = {
             'about': 'Student (10th->11th grade) interested in CS & TechPhys.<br>Programming since ~2021: from python and visual scripting to C/Rust.<br><br>I love to study and create<br>I enjoy understanding how systems work and building small projects to learn.',
@@ -118,6 +168,11 @@
             'security': '🔐 Interest: Cybersecurity fundamentals<br>🧰 Learning: nmap, Wireshark basics, network protocols, <br>⚠️ All experiments are in isolated lab environments only.',
             
             'books': '📖 Finished: "Grokking Algorithms", "The C Programming Language" (K&R)<br>📖 Reading: "Rust in Action", "Digital Circuitry and Computer Architecture", "Clean Code"<br>📖 Next: "Programming World: Algorithms", "Assembly and the x86 Digital Model"',
+
+            'whoami': 'sakair - Future physicist, engineer, and part-time superhero.',
+            'hobbies': '🎸 Playing electric guitar',
+            'su': 'Authentication failure: You need to write more C code to gain root privileges.',
+            'ping': 'PONG! Latency: 1ms. The connection to the mainframe is stable.',
             
             'neofetch': `
        /\\      sakair@portfolio
@@ -132,22 +187,27 @@
                 DE: Hyprland
                 WM: i3-like vibes
             `,
+
+            'catgirl': catgirlArt + '<br><i style="color:#ff79c6">nya~ welcome back, senpai! 🐱</i>',
             
             'contact': '📧 Email: sakairlinux@gmail.com<br>🐙 GitHub: <a href="https://github.com/Saka1r" target="_blank">github.com/Saka1r</a><br><i>Always open to feedback and learning from others.</i>',
             
-            'help': 'Available commands:<br>• about, skills, projects<br>• education, hardware, security<br>• books, contact, neofetch<br>• clear, help',
+            'help': 'Available commands:<br>• about, skills, projects<br>• education, hardware, security<br>• books, contact, neofetch<br>• catgirl, clear, help',
             
-            'clear': '__CLEAR__', // Специальный маркер
+            'clear': '__CLEAR__',
             'sudo': 'Nice try! But this system runs on humility mode 😊',
             'matrix': 'Wake up, Neo... (Just kidding, but have a nice day!)',
             'exit': 'You cannot leave. The learning never stops. 🔁'
         };
 
-        // Приветствие при загрузке
+        // Приветствие при загрузке (с тянкой!)
         window.onload = () => {
-            printLine('Welcome to sakair\'s terminal portfolio.');
-            printLine('Type <span style="color:#58a6ff">"help"</span> to see available commands.');
+            const container = document.createElement('div');
+            container.className = 'welcome-container';
+            container.innerHTML = catgirlArt + '<div>' + welcomeText + '</div>';
+            output.appendChild(container);
             printLine('');
+            updateCursorPosition();
         };
 
         // Функция вывода строки
@@ -168,18 +228,39 @@
             window.scrollTo(0, document.body.scrollHeight);
         }
 
+        // Обновление позиции курсора (теперь через left + textWidth)
+        function updateCursorPosition() {
+            const cursor = document.querySelector('.cursor');
+            const inputRect = input.getBoundingClientRect();
+            const wrapperRect = input.parentElement.getBoundingClientRect();
+            const textWidth = getTextWidth(input.value, input);
+            
+            // Позиция = смещение input внутри wrapper + ширина текста
+            const leftPos = (inputRect.left - wrapperRect.left) + textWidth;
+            cursor.style.left = leftPos + 'px';
+            cursor.style.right = 'auto';
+        }
+
+        // Вычисление ширины текста через canvas
+        function getTextWidth(text, element) {
+            const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
+            const context = canvas.getContext('2d');
+            context.font = getComputedStyle(element).font;
+            return context.measureText(text).width;
+        }
+
         // Обработка ввода
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const rawCommand = input.value;
                 const command = rawCommand.trim().toLowerCase();
                 
-                // Показываем введённую команду в истории
                 if (rawCommand.trim() !== '') {
+                    commandHistory.push(rawCommand);
+                    historyIndex = commandHistory.length;
                     printLine(rawCommand, true);
                 }
 
-                // Логика выполнения
                 if (command === 'clear') {
                     output.innerHTML = '';
                 } else if (commands[command]) {
@@ -194,16 +275,43 @@
                 }
 
                 input.value = '';
+                updateCursorPosition();
                 scrollToBottom();
+            }
+            
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    input.value = commandHistory[historyIndex];
+                    updateCursorPosition();
+                }
+            }
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    input.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    input.value = '';
+                }
+                updateCursorPosition();
             }
         });
 
-        // Возврат фокуса при клике в любом месте
+        // Обновление курсора при вводе
+        input.addEventListener('input', updateCursorPosition);
+        
+        // Обновление курсора при ресайзе окна
+        window.addEventListener('resize', updateCursorPosition);
+
+        // Возврат фокуса при клике
         document.addEventListener('click', () => {
             input.focus();
         });
 
-        // Фокус при загрузке (для мобильных)
         document.addEventListener('touchstart', () => {
             input.focus();
         }, { passive: true });
