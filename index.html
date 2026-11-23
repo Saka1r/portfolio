@@ -1,320 +1,320 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sakair@portfolio</title>
-    <style>
-        /* === CSS STYLES === */
-        body {
-            background-color: #0d1117;
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
-            padding: 20px;
-            margin: 0;
-            overflow-x: hidden;
-            line-height: 1.5;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Svyatoslav Mikhailov (sakair) — student, systems programming.">
+<title>sakair@portfolio</title>
+<style>
+  * { box-sizing: border-box; }
+  body { background:#0d1117; color:#00ff41; font-family:'Courier New',Courier,monospace;
+         font-size:16px; padding:20px; margin:0; overflow-x:hidden; line-height:1.5; }
+  #output { white-space:pre-wrap; margin-bottom:10px; }
+  #output a { color:#58a6ff; text-decoration:none; }
+  #output a:hover { text-decoration:underline; }
+  .dim { color:#8b949e; }
+  .prompt { color:#ff7b72; margin-right:8px; white-space:nowrap; }
+  .command-history { color:#8b949e; margin:2px 0; }
+  .input-line { display:flex; align-items:center; flex-wrap:wrap; }
+  .input-wrapper { display:flex; flex-grow:1; align-items:center; min-width:0; position:relative; }
+  input { background:transparent; border:none; color:#00ff41; font:inherit; width:100%;
+          outline:none; caret-color:transparent; min-width:50px; padding-right:12px; }
+  .cursor { position:absolute; display:inline-block; width:10px; height:1.2em; background:#00ff41;
+            animation:blink 1s step-end infinite; pointer-events:none; top:50%; transform:translateY(-50%); }
+  @keyframes blink { 50% { opacity:0; } }
+  .welcome-container { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
+  .welcome-text { color:#58a6ff; }
+  img.chan { height:160px; width:auto; border-radius:6px; }
+  .ascii-art { color:#ff79c6; margin:0; line-height:1.15; font:inherit; }
 
-        #output {
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-        }
+  /* ===== Резюме: один набор стилей для экрана и печати ===== */
+  #resume { display:none; background:#fff; color:#111; font-family:Arial,Helvetica,sans-serif;
+            font-size:11pt; line-height:1.35; max-width:820px; margin:0 auto; padding:36px; border-radius:8px; }
+  body.resume-view #terminal { display:none; }   /* режим просмотра резюме */
+  body.resume-view #resume  { display:block; }
+  #resume h1 { font-size:20pt; margin:0 0 2pt; }
+  #resume .role { margin:0 0 2pt; color:#333; }
+  #resume .contacts { margin:0 0 8pt; font-size:9.5pt; color:#444; }
+  #resume h2 { font-size:12pt; border-bottom:1px solid #999; padding-bottom:2pt; margin:10pt 0 4pt; }
+  #resume p { margin:2pt 0; }
+  #resume .project { break-inside:avoid; margin-bottom:5pt; }
+  #resume .desc { color:#333; }
+  .resume-toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+  .resume-toolbar button { font:inherit; font-size:10pt; padding:6px 14px; cursor:pointer;
+                           border:1px solid #999; border-radius:6px; background:#f3f3f3; }
+  .resume-toolbar .hint { color:#666; font-size:8.5pt; }
 
-        #output a {
-            color: #58a6ff;
-            text-decoration: none;
-        }
-        #output a:hover {
-            text-decoration: underline;
-        }
-
-        .input-line {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .prompt {
-            color: #ff7b72;
-            margin-right: 8px;
-            white-space: nowrap;
-        }
-
-        .input-wrapper {
-            display: flex;
-            flex-grow: 1;
-            align-items: center;
-            min-width: 0;
-            position: relative;
-        }
-
-        input {
-            background: transparent;
-            border: none;
-            color: #00ff41;
-            font-family: inherit;
-            font-size: inherit;
-            width: 100%;
-            outline: none;
-            caret-color: transparent;
-            min-width: 50px;
-            padding-right: 12px;
-        }
-        
-        .cursor {
-            position: absolute;
-            display: inline-block;
-            width: 10px;
-            height: 1.2em;
-            background-color: #00ff41;
-            animation: blink 1s step-end infinite;
-            pointer-events: none;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        .command-history {
-            color: #8b949e;
-            margin: 2px 0;
-        }
-
-        /* Анимация появления тянки */
-        .ascii-art {
-            color: #ff79c6;
-            line-height: 1.1;
-            display: inline-block;
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .welcome-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .welcome-text {
-            color: #58a6ff;
-        }
-
-        /* Адаптив для мобильных */
-        @media (max-width: 600px) {
-            body { font-size: 14px; padding: 10px; }
-            .prompt { font-size: 14px; }
-            .ascii-art { font-size: 12px; }
-        }
-    </style>
+  /* ===== Печать: терминал скрыт, резюме видно ВСЕГДА (даже Ctrl+P из терминала) ===== */
+  @page { size:A4; margin:14mm; }
+  @media print {
+    body { background:#fff; padding:0; }
+    #terminal, .resume-toolbar { display:none !important; }
+    #resume { display:block !important; max-width:none; margin:0; padding:0; border-radius:0; }
+  }
+  @media (max-width:600px) {
+    body { font-size:14px; padding:10px; }
+    img.chan { height:110px; }
+    #resume { padding:18px; }
+  }
+</style>
 </head>
 <body>
 
-    <div id="output"></div>
-    
-    <div class="input-line">
-        <span class="prompt">sakair@portfolio:~$</span>
-        <div class="input-wrapper">
-            <input type="text" id="command-input" autocomplete="off" autofocus>
-            <span class="cursor"></span>
-        </div>
+<main id="terminal">
+  <div id="output" aria-live="polite"></div>
+  <div class="input-line">
+    <span class="prompt">sakair@portfolio:~$</span>
+    <div class="input-wrapper">
+      <input id="command-input" type="text" autocomplete="off" autocapitalize="off"
+             spellcheck="false" autofocus aria-label="terminal input">
+      <span class="cursor"></span>
     </div>
+  </div>
+</main>
 
-    <script>
-        // === JS LOGIC ===
-        const output = document.getElementById('output');
-        const input = document.getElementById('command-input');
+<section id="resume">
+  <div class="resume-toolbar">
+    <button id="btn-print">🖨 Print / Save as PDF</button>
+    <button id="btn-back">← terminal</button>
+    <span class="hint">No dialog? (some mobile browsers) → browser menu: Share / Print. Esc — back.</span>
+  </div>
+  <div id="resume-body"></div>
+</section>
 
-        // История команд (глобальные переменные)
-        let commandHistory = [];
-        let historyIndex = -1;
+<script src="data.js"></script>
+<script>
+"use strict";
+const output = document.getElementById("output");
+const input  = document.getElementById("command-input");
+const PROMPT = "sakair@portfolio:~$";
 
-        // ASCII-арт
-        const catgirlArt = `<span class="ascii-art">
-  /\\_/\\
- ( o.o )
- /|   |\\
-(_|   |_)
-  U   U
-</span>`;
+// Фабрика узлов: append(строка) = текстовый узел, не HTML → XSS невозможен
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  node.append(...children.flat());
+  return node;
+}
+const link = (url, text = url) =>
+  el("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, text);
+const line = (...children) => el("div", {}, ...children);
+function print(...nodes) { output.append(...nodes); window.scrollTo(0, document.body.scrollHeight); }
+const echoCommand = (text) =>
+  print(el("div", { class: "command-history" }, el("span", { class: "prompt" }, PROMPT), " " + text));
 
-        const welcomeText = `<span class="welcome-text">
-<b>★ sakair@portfolio terminal ★</b>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- Welcome, guest! 
- Type <span style="color:#ff7b72">"help"</span> to begin your journey.
- 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>`;
+const FALLBACK_CAT = "  /\\_/\\\n ( o.o )\n /|   |\\\n(_|   |_)\n  U   U";
+function makeChan() {
+  const img = el("img", { src: "chan.png", alt: "chan", class: "chan" });
+  img.addEventListener("error", () => img.replaceWith(el("pre", { class: "ascii-art" }, FALLBACK_CAT)));
+  return img;
+}
 
-        // База команд 
-        const commands = {
-            'about': 'Student (10th->11th grade) interested in CS & TechPhys.<br>Programming since ~2021: from python and visual scripting to C/Rust.<br><br>I love to study and create<br>I enjoy understanding how systems work and building small projects to learn.',
-            
-            'skills': '<b>Languages:</b> C (K&R), Python, Rust (learning), Bash<br><b>Concepts:</b> Algorithms, Git, RISC-V basics<br><b>Systems:</b> Arch Linux, CLI workflows<br><b>Hardware:</b> ESP32, RPi, 3D printing<br><i>Always learning something new.</i>',
-            
-            'projects': '1. <a href="https://github.com/Saka1r/fu" target="_blank">fu</a> — Learning project: exploring VCS internals in C++<br>2. <a href="https://github.com/Saka1r/Jarvis" target="_blank">Jarvis</a> — Experimenting with local voice assistants (Python)<br>3. <a href="https://github.com/Saka1r/School_project_cpu" target="_blank">Chip-8</a> — Simple emulator in Rust to understand CPU basics<br><a href="https://github.com/Saka1r/brainfuck" target="_blank">brainfuck</a> — Brainfuck minimal interpreter written in x86_64 assembly (NASM). No libc, pure Linux syscalls.</i><br>All projects are educational — code may be messy 😅',
-            
-            'education': '🎓 School: 10th grade, focus on math & physics<br>🔬 Kvantorium: 2 years, learned teamwork & project basics<br>📚 Self-study: "The C Programming Language", "Grokking Algorithms", RISC-V docs<br>',
-            
-            'hardware': '🐧 Daily driver: Arch Linux + Hyprland<br>📦 Boards: Orange Pi Zero 3, Raspberry Pi Zero 2W<br>🎮 Microcontrollers: ESP32, Arduino (for fun projects)<br>🖨 3D Printing: Modeling & printing parts for my setups',
-            
-            'security': '🔐 Interest: Cybersecurity fundamentals<br>🧰 Learning: nmap, Wireshark basics, network protocols, <br>⚠️ All experiments are in isolated lab environments only.',
-            
-            'books': '📖 Finished: "Grokking Algorithms", "The C Programming Language" (K&R)<br>📖 Reading: "Rust in Action", "Digital Circuitry and Computer Architecture", "Clean Code"<br>📖 Next: "Programming World: Algorithms", "Assembly and the x86 Digital Model"',
+// ---- рендереры: DATA → узлы ----
+const renderAbout = () => [
+  line(el("b", {}, DATA.user.name), " (" + DATA.user.alias + "), " + DATA.user.age + " y.o., " + DATA.user.location),
+  line(DATA.summary),
+];
+const renderSkills   = () => DATA.skills.map(([k, v]) => line(el("b", {}, k + ": "), v));
+const renderProjects = () => DATA.projects.flatMap((p, i) => [
+  line(el("b", {}, (i + 1) + ". "), link(p.url, p.name), el("span", { class: "dim" }, "  [" + p.stack + "]")),
+  line("   " + p.desc),
+]);
+const renderKernel = () => [
+  line(el("b", {}, "kernel.log — my first (tiny) patch")),
+  line("patch:    " + DATA.kernel.patch),
+  line("accepted: " + DATA.kernel.accepted + " → " + DATA.kernel.tree),
+  line("by:       " + DATA.kernel.maintainer),
+  line("lore:     ", link(DATA.kernel.url, "lore.kernel.org")),
+  line(el("span", { class: "dim" }, DATA.kernel.note)),
+];
+const renderEducation = () => DATA.education.map(x => line("• " + x));
+const renderHardware  = () => DATA.hardware.map(x => line("• " + x));
+const renderBooks = () => [
+  line(el("b", {}, "Finished: "), DATA.books.finished.join(" · ")),
+  line(el("b", {}, "Reading:  "), DATA.books.reading.join(" · ")),
+];
+const renderHobbies = () => [line(DATA.hobbies.join(" · "))];
+const renderWhoami  = () => [line(DATA.user.alias + " — student. Future engineer, part-time superhero.")];
+const renderContact = () => {
+  const u = DATA.user;
+  const rows = [
+    line("email:    ", link("mailto:" + u.email, u.email)),
+    line("github:   ", link(u.github)),
+    line("site:     ", link(u.site)),
+  ];
+  if (u.telegram) rows.push(line("telegram: ", link("https://t.me/" + u.telegram, "@" + u.telegram)));
+  return rows;
+};
+const renderNeofetch = () => [line([
+  "       /\\      sakair@portfolio",
+  "      /  \\     ----------------",
+  "     /    \\    OS: Arch Linux",
+  "    /------\\   Host: Student Laptop",
+  "   /|      |\\  Kernel: Learning Mode",
+  "  / |      | \\ Uptime: " + DATA.user.age + " years",
+  "    |      |   Packages: 4.5-5y of coding",
+  "    |      |   Shell: bash",
+  "    |______|   DE: Hyprland",
+].join("\n"))];
 
-            'whoami': 'sakair - Future physicist, engineer, and part-time superhero.',
-            'hobbies': '🎸 Playing electric guitar',
-            'su': 'Authentication failure: You need to write more C code to gain root privileges.',
-            'ping': 'PONG! Latency: 1ms. The connection to the mainframe is stable.',
-            
-            'neofetch': `
-       /\\      sakair@portfolio
-      /  \\     ----------------
-     /    \\    OS: Arch Linux
-    /------\\   Host: Student Laptop
-   /|      |\\  Kernel: Learning Mode
-  / |      | \\ Uptime: 16 years
-    |      |   Packages: 4->5y coding journey
-    |      |   Shell: bash
-    |______|   Resolution: Growing Daily
-                DE: Hyprland
-                WM: i3-like vibes
-            `,
+// ---- команды ----
+const commands = {
+  help:      { desc: "show this list",                   run: cmdHelp },
+  about:     { desc: "who I am",                         run: renderAbout },
+  skills:    { desc: "tech stack",                       run: renderSkills },
+  projects:  { desc: "what I built",                     run: renderProjects },
+  kernel:    { desc: "my first kernel patch",            run: renderKernel },
+  education: { desc: "school & self-study",              run: renderEducation },
+  hardware:  { desc: "boards & tools",                   run: renderHardware },
+  books:     { desc: "reading list",                     run: renderBooks },
+  hobbies:   { desc: "life outside code",                run: renderHobbies },
+  contact:   { desc: "email & links",                    run: renderContact },
+  whoami:    { desc: "short identity",                   run: renderWhoami },
+  neofetch:  { desc: "system info",                      run: renderNeofetch },
+  ls:        { desc: "list files",                       run: cmdLs },
+  cat:       { desc: "cat <file> — read a file",         run: cmdCat },
+  pdf:       { desc: "resume view → print / save as PDF", run: cmdPdf },
+  clear:     { desc: "clear the screen",                 run: cmdClear },
+  sudo: { hidden: true, run: () => [line("sakair is not in the sudoers file. This incident will be reported.")] },
+  su:   { hidden: true, run: () => [line("Authentication failure: write more C to gain root privileges.")] },
+  vim:  { hidden: true, run: cmdEditorEgg },
+  nano: { hidden: true, run: cmdEditorEgg },
+  chan: { hidden: true, run: () => [makeChan()] },
+  exit: { hidden: true, run: () => [line("You cannot leave. The learning never stops. 🔁")] },
+  matrix: { hidden: true, run: () => [line("Wake up, Neo... (just kidding — have a nice day)")] },
+};
+function cmdHelp() {
+  return Object.entries(commands).filter(([, c]) => !c.hidden)
+    .map(([name, c]) => line(el("b", {}, name.padEnd(11)), c.desc));
+}
+function cmdEditorEgg() {
+  const nuta = DATA.projects.find(p => p.name === "nuta");
+  return [line("Looking for a real editor? I wrote one: ", link(nuta.url, "nuta"), " — modal, Rust, LSP.")];
+}
+function cmdClear() { output.replaceChildren(); }
 
-            'catgirl': catgirlArt + '<br><i style="color:#ff79c6">nya~ welcome back, senpai! 🐱</i>',
-            
-            'contact': '📧 Email: sakairlinux@gmail.com<br>🐙 GitHub: <a href="https://github.com/Saka1r" target="_blank">github.com/Saka1r</a><br><i>Always open to feedback and learning from others.</i>',
-            
-            'help': 'Available commands:<br>• about, skills, projects<br>• education, hardware, security<br>• books, contact, neofetch<br>• catgirl, clear, help',
-            
-            'clear': '__CLEAR__',
-            'sudo': 'Nice try! But this system runs on humility mode 😊',
-            'matrix': 'Wake up, Neo... (Just kidding, but have a nice day!)',
-            'exit': 'You cannot leave. The learning never stops. 🔁'
-        };
+// PDF: показываем резюме на экране, печать — по клику кнопки (надёжнее таймера)
+function cmdPdf() {
+  document.body.classList.add("resume-view");
+  window.scrollTo(0, 0);
+  return null;
+}
+function exitResume() {
+  document.body.classList.remove("resume-view");
+  input.focus();
+  window.scrollTo(0, document.body.scrollHeight);
+}
+document.getElementById("btn-print").addEventListener("click", () => window.print());
+document.getElementById("btn-back").addEventListener("click", exitResume);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.body.classList.contains("resume-view")) exitResume();
+});
 
-        // Приветствие при загрузке (с тянкой!)
-        window.onload = () => {
-            const container = document.createElement('div');
-            container.className = 'welcome-container';
-            container.innerHTML = catgirlArt + '<div>' + welcomeText + '</div>';
-            output.appendChild(container);
-            printLine('');
-            updateCursorPosition();
-        };
+const FILE_MAP = { kernel: "kernel.log", pdf: "resume.pdf" };
+function virtualFiles() {
+  return Object.keys(commands)
+    .filter(n => !commands[n].hidden && !["help", "ls", "cat", "clear"].includes(n))
+    .map(n => FILE_MAP[n] ?? n + ".txt");
+}
+function cmdLs() { return [line(virtualFiles().join("  "))]; }
+function cmdCat(args) {
+  if (!args[0]) return [line("usage: cat <file>   (try: cat kernel.log)")];
+  const base = args[0].replace(/\.(txt|log|pdf)$/, "");
+  const name = base === "resume" ? "pdf" : base;
+  const cmd = commands[name];
+  if (!cmd || cmd.hidden) return [line("cat: " + args[0] + ": No such file")];
+  return cmd.run([]);
+}
 
-        // Функция вывода строки
-        function printLine(text, isCommand = false) {
-            const line = document.createElement('div');
-            if (isCommand) {
-                line.className = 'command-history';
-                line.innerHTML = `<span class="prompt">sakair@portfolio:~$</span> ${text}`;
-            } else {
-                line.innerHTML = text;
-            }
-            output.appendChild(line);
-            scrollToBottom();
-        }
+// ---- ввод, история, Tab ----
+const cmdHistory = [];
+let histIdx = 0;
+function execute(raw) {
+  const text = raw.trim();
+  if (!text) return;
+  cmdHistory.push(text); histIdx = cmdHistory.length;
+  echoCommand(text);
+  const [name, ...args] = text.toLowerCase().split(/\s+/);
+  const cmd = commands[name];
+  if (cmd) { const nodes = cmd.run(args); if (nodes) print(...nodes); }
+  else print(line("command not found: ", el("b", {}, name), " — type ", el("b", {}, "help")));
+}
+function tabComplete() {
+  const v = input.value;
+  if (!v || v.includes(" ")) return;
+  const matches = Object.keys(commands).filter(n => !commands[n].hidden && n.startsWith(v.toLowerCase()));
+  if (matches.length === 1) { input.value = matches[0] + (matches[0] === "cat" ? " " : ""); updateCursor(); }
+  else if (matches.length > 1) { echoCommand(v); print(line(matches.join("  "))); }
+}
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { execute(input.value); input.value = ""; updateCursor(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); if (histIdx > 0) input.value = cmdHistory[--histIdx]; updateCursor(); }
+  else if (e.key === "ArrowDown") {
+    e.preventDefault();
+    if (histIdx < cmdHistory.length - 1) input.value = cmdHistory[++histIdx];
+    else { histIdx = cmdHistory.length; input.value = ""; }
+    updateCursor();
+  }
+  else if (e.key === "Tab") { e.preventDefault(); tabComplete(); }
+  else if (e.ctrlKey && e.key.toLowerCase() === "l") { e.preventDefault(); cmdClear(); }
+});
 
-        // Прокрутка вниз
-        function scrollToBottom() {
-            window.scrollTo(0, document.body.scrollHeight);
-        }
+// ---- курсор ----
+function getTextWidth(text, element) {
+  const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+  const ctx = canvas.getContext("2d");
+  ctx.font = getComputedStyle(element).font;
+  return ctx.measureText(text).width;
+}
+function updateCursor() {
+  const cursor = document.querySelector(".cursor");
+  cursor.style.left = (input.getBoundingClientRect().left
+    - input.parentElement.getBoundingClientRect().left
+    + getTextWidth(input.value, input)) + "px";
+}
+input.addEventListener("input", updateCursor);
+window.addEventListener("resize", updateCursor);
+document.addEventListener("click", () => input.focus());
+document.addEventListener("touchstart", () => input.focus(), { passive: true });
 
-        // Обновление позиции курсора (теперь через left + textWidth)
-        function updateCursorPosition() {
-            const cursor = document.querySelector('.cursor');
-            const inputRect = input.getBoundingClientRect();
-            const wrapperRect = input.parentElement.getBoundingClientRect();
-            const textWidth = getTextWidth(input.value, input);
-            
-            // Позиция = смещение input внутри wrapper + ширина текста
-            const leftPos = (inputRect.left - wrapperRect.left) + textWidth;
-            cursor.style.left = leftPos + 'px';
-            cursor.style.right = 'auto';
-        }
+// ---- резюме из тех же DATA ----
+function buildResume() {
+  const u = DATA.user, k = DATA.kernel;
+  document.getElementById("resume-body").append(
+    el("header", {},
+      el("h1", {}, u.name),
+      el("p", { class: "role" }, u.role),
+      el("p", { class: "contacts" },
+        [u.email, u.github, u.site, u.telegram && "t.me/" + u.telegram].filter(Boolean).join("  ·  "))),
+    el("section", {}, el("h2", {}, "Summary"), el("p", {}, DATA.summary)),
+    el("section", {}, el("h2", {}, "Open Source"),
+      el("p", {}, "First Linux kernel patch (a small cleanup): " + k.patch),
+      el("p", {}, "Accepted into " + k.tree + ", " + k.accepted + " (maintainer: " + k.maintainer + "). " + k.workflow),
+      el("p", { class: "desc" }, k.url)),
+    el("section", {}, el("h2", {}, "Projects"),
+      DATA.projects.map(p => el("div", { class: "project" },
+        el("p", {}, el("b", {}, p.name), " — " + p.stack + " — " + p.url),
+        el("p", { class: "desc" }, p.desc)))),
+    el("section", {}, el("h2", {}, "Skills"),
+      DATA.skills.map(([a, b]) => el("p", {}, el("b", {}, a + ": "), b))),
+    el("section", {}, el("h2", {}, "Education"),
+      DATA.education.map(x => el("p", {}, x))),
+    el("p", { class: "desc" }, "Beyond code: " + DATA.hobbies.join(", ")),
+  );
+}
 
-        // Вычисление ширины текста через canvas
-        function getTextWidth(text, element) {
-            const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement('canvas'));
-            const context = canvas.getContext('2d');
-            context.font = getComputedStyle(element).font;
-            return context.measureText(text).width;
-        }
-
-        // Обработка ввода
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                const rawCommand = input.value;
-                const command = rawCommand.trim().toLowerCase();
-                
-                if (rawCommand.trim() !== '') {
-                    commandHistory.push(rawCommand);
-                    historyIndex = commandHistory.length;
-                    printLine(rawCommand, true);
-                }
-
-                if (command === 'clear') {
-                    output.innerHTML = '';
-                } else if (commands[command]) {
-                    const response = commands[command];
-                    if (response === '__CLEAR__') {
-                        output.innerHTML = '';
-                    } else {
-                        printLine(response);
-                    }
-                } else if (command !== '') {
-                    printLine(`Command not found: <b>${command}</b>. Type <span style="color:#58a6ff">"help"</span> for list.`);
-                }
-
-                input.value = '';
-                updateCursorPosition();
-                scrollToBottom();
-            }
-            
-            if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    input.value = commandHistory[historyIndex];
-                    updateCursorPosition();
-                }
-            }
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    input.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    input.value = '';
-                }
-                updateCursorPosition();
-            }
-        });
-
-        // Обновление курсора при вводе
-        input.addEventListener('input', updateCursorPosition);
-        
-        // Обновление курсора при ресайзе окна
-        window.addEventListener('resize', updateCursorPosition);
-
-        // Возврат фокуса при клике
-        document.addEventListener('click', () => {
-            input.focus();
-        });
-
-        document.addEventListener('touchstart', () => {
-            input.focus();
-        }, { passive: true });
-    </script>
+function welcome() {
+  print(el("div", { class: "welcome-container" },
+    makeChan(),
+    el("div", { class: "welcome-text" },
+      el("b", {}, "★ sakair@portfolio ★"),
+      "\nstudent · I build small systems to learn how they work\n\n",
+      'Type "help" to begin. Try "projects", "about", "pdf".\n')));
+}
+buildResume();
+welcome();
+updateCursor();
+input.focus();
+</script>
 </body>
 </html>
